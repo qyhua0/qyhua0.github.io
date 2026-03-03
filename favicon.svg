@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f0f1a"/>
+      <stop offset="100%" style="stop-color:#1a0f2e"/>
+    </linearGradient>
+    <linearGradient id="gem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#a78bfa"/>
+      <stop offset="50%" style="stop-color:#60a5fa"/>
+      <stop offset="100%" style="stop-color:#34d399"/>
+    </linearGradient>
+    <linearGradient id="shine" x1="0%" y1="0%" x2="60%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.6"/>
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+
+  <!-- Geometric gem / crystal shape -->
+  <g filter="url(#glow)" transform="translate(16,16)">
+    <!-- Main diamond body -->
+    <polygon points="0,-10 8,-3 6,8 -6,8 -8,-3" fill="url(#gem)" opacity="0.9"/>
+    <!-- Top facet -->
+    <polygon points="0,-10 8,-3 0,-1" fill="url(#shine)" opacity="0.7"/>
+    <!-- Left facet -->
+    <polygon points="0,-10 -8,-3 0,-1" fill="#ffffff" opacity="0.15"/>
+    <!-- Middle highlight line -->
+    <line x1="0" y1="-10" x2="0" y2="-1" stroke="#ffffff" stroke-width="0.4" opacity="0.5"/>
+    <!-- Bottom point -->
+    <polygon points="6,8 -6,8 0,13" fill="#7c3aed" opacity="0.85"/>
+    <!-- Bottom shine -->
+    <polygon points="0,13 6,8 0,10" fill="#ffffff" opacity="0.2"/>
+  </g>
+
+  <!-- Subtle corner sparkle dots -->
+  <circle cx="5" cy="5" r="0.8" fill="#a78bfa" opacity="0.5"/>
+  <circle cx="27" cy="5" r="0.5" fill="#60a5fa" opacity="0.4"/>
+  <circle cx="27" cy="27" r="0.8" fill="#34d399" opacity="0.5"/>
+  <circle cx="5" cy="27" r="0.5" fill="#a78bfa" opacity="0.3"/>
+</svg>
