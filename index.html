@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -8,13 +7,12 @@
 <meta name="description" content="17年+Java全栈专家，AI应用开发者，CSDN博客编程框架技术领域认证。提供高性价比软件定制开发，无中间商，直接合作。">
 <link rel="canonical" href="https://www.bloghua.com">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
- <style>
-body {
-  font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-}
-</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@700&display=swap" rel="stylesheet">
 
+<!-- 原有外部插件：AI客服Widget，保持不变 -->
 <script src="https://app.sihuaai.com/widget-loader.js" data-id="a013f01a08c9436abbb296feaeb0794a" defer></script>
+
 <style>
   /* ===== CSS VARIABLES ===== */
   :root {
@@ -29,12 +27,14 @@ body {
     --text-muted: #64748b;
     --border: #e2e8f0;
     --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0c4a6e 100%);
+    /* 黑科技专属变量 */
+    --neon: #00d4ff;
+    --neon-dim: rgba(0,212,255,0.15);
+    --neon-glow: rgba(0,212,255,0.5);
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
   html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Noto Sans SC', -apple-system, sans-serif;
     background: var(--bg);
@@ -54,7 +54,6 @@ body {
     border-bottom: 1px solid rgba(255,255,255,0.08);
     transition: all 0.3s ease;
   }
-
   .nav-inner {
     max-width: 1200px;
     margin: 0 auto;
@@ -64,7 +63,6 @@ body {
     align-items: center;
     justify-content: space-between;
   }
-
   .nav-logo {
     font-family: 'Noto Serif SC', serif;
     font-size: 1.1rem;
@@ -73,15 +71,8 @@ body {
     text-decoration: none;
     letter-spacing: 0.05em;
   }
-
-  .nav-logo span { color: var(--accent); }
-
-  .nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-  }
-
+  .nav-logo span { color: var(--neon); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
   .nav-links a {
     color: rgba(255,255,255,0.75);
     text-decoration: none;
@@ -90,20 +81,16 @@ body {
     transition: color 0.2s;
     letter-spacing: 0.02em;
   }
-
-  .nav-links a:hover { color: var(--accent); }
-
+  .nav-links a:hover { color: var(--neon); }
   .nav-cta {
-    background: var(--accent);
-    color: #fff !important;
+    background: var(--neon) !important;
+    color: #000 !important;
     padding: 0.4rem 1.1rem;
     border-radius: 6px;
-    font-weight: 500 !important;
-    transition: background 0.2s !important;
+    font-weight: 600 !important;
+    transition: all 0.2s !important;
   }
-
-  .nav-cta:hover { background: #0284c7 !important; color: #fff !important; }
-
+  .nav-cta:hover { background: #fff !important; color: #000 !important; }
   .hamburger {
     display: none;
     flex-direction: column;
@@ -111,130 +98,182 @@ body {
     cursor: pointer;
     padding: 4px;
   }
-
   .hamburger span {
-    width: 24px;
-    height: 2px;
+    width: 24px; height: 2px;
     background: #fff;
     border-radius: 2px;
     transition: all 0.3s;
   }
 
-  /* ===== HERO ===== */
+  /* ===== HERO — 黑科技版 ===== */
   .hero {
+    position: relative;
     min-height: 100vh;
-    background: var(--gradient-hero);
+    background: #030b14;
     display: flex;
     align-items: center;
-    position: relative;
     overflow: hidden;
+    cursor: none;
   }
 
-  /* Decorative background grid */
-  .hero::before {
-    content: '';
+  /* 矩阵雨 canvas */
+  #canvas-matrix {
     position: absolute;
     inset: 0;
-    background-image:
-      linear-gradient(rgba(14,165,233,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(14,165,233,0.07) 1px, transparent 1px);
-    background-size: 60px 60px;
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    z-index: 0;
+    opacity: 0.28;
   }
 
-  /* Glowing orbs */
-  .hero::after {
+  /* 粒子神经网络 canvas */
+  #canvas-particles {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  /* 扫描线 */
+  .hero-scanline {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(0,212,255,0.7), transparent);
+    animation: scanline 5s linear infinite;
+    z-index: 3;
+    pointer-events: none;
+  }
+  @keyframes scanline {
+    0%  { top: -2px; opacity: 0.8; }
+    10% { opacity: 1; }
+    90% { opacity: 0.6; }
+    100%{ top: 100%; opacity: 0; }
+  }
+
+  /* 四角 HUD 框 */
+  .hero-corner {
+    position: absolute;
+    width: 22px; height: 22px;
+    z-index: 4;
+    pointer-events: none;
+  }
+  .hero-corner.tl { top: 16px; left: 16px; border-top: 1.5px solid var(--neon); border-left: 1.5px solid var(--neon); }
+  .hero-corner.tr { top: 16px; right: 16px; border-top: 1.5px solid var(--neon); border-right: 1.5px solid var(--neon); }
+  .hero-corner.bl { bottom: 16px; left: 16px; border-bottom: 1.5px solid var(--neon); border-left: 1.5px solid var(--neon); }
+  .hero-corner.br { bottom: 16px; right: 16px; border-bottom: 1.5px solid var(--neon); border-right: 1.5px solid var(--neon); }
+
+  /* 自定义光标 */
+  #hero-cursor {
+    position: absolute;
+    width: 26px; height: 26px;
+    border: 1.5px solid var(--neon);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 50;
+    transform: translate(-50%, -50%);
+    transition: width 0.15s, height 0.15s;
+    mix-blend-mode: screen;
+  }
+  #hero-cursor::after {
     content: '';
     position: absolute;
-    width: 600px;
-    height: 600px;
+    inset: 4px;
+    background: var(--neon);
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(14,165,233,0.15) 0%, transparent 70%);
-    top: -100px;
-    right: -100px;
-    pointer-events: none;
+    opacity: 0.35;
   }
+  .hero:hover #hero-cursor { display: block; }
 
-  .hero-orb {
+  /* 底部状态栏 */
+  .hero-statusbar {
     position: absolute;
-    width: 400px;
-    height: 400px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(5,150,105,0.12) 0%, transparent 70%);
-    bottom: -50px;
-    left: 10%;
-    pointer-events: none;
+    bottom: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: rgba(0,212,255,0.45);
+    letter-spacing: 0.15em;
+    font-family: 'Courier New', monospace;
+    z-index: 5;
+    white-space: nowrap;
   }
+  .hero-statusbar .ok { color: #00ff88; }
 
+  /* Hero 主内容 */
   .hero-content {
+    position: relative;
+    z-index: 5;
     max-width: 1200px;
     margin: 0 auto;
     padding: 8rem 1.5rem 4rem;
-    position: relative;
-    z-index: 1;
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 360px;
     gap: 4rem;
     align-items: center;
+    width: 100%;
   }
 
   .hero-badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    background: rgba(14,165,233,0.15);
-    border: 1px solid rgba(14,165,233,0.3);
-    color: var(--accent);
-    font-size: 0.8rem;
-    padding: 0.35rem 0.9rem;
+    gap: 8px;
+    border: 1px solid rgba(0,212,255,0.4);
+    color: var(--neon);
+    font-size: 0.75rem;
+    padding: 0.35rem 1rem;
     border-radius: 100px;
     margin-bottom: 1.5rem;
-    font-weight: 500;
-    letter-spacing: 0.05em;
+    background: rgba(0,212,255,0.06);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: 'Courier New', monospace;
   }
-
-  .hero-badge::before {
-    content: '';
-    width: 7px;
-    height: 7px;
-    background: var(--accent);
+  .hero-badge-dot {
+    width: 7px; height: 7px;
+    background: var(--neon);
     border-radius: 50%;
-    animation: pulse-dot 2s infinite;
+    animation: pulse-neon 1.6s infinite;
+    box-shadow: 0 0 6px var(--neon);
   }
-
-  @keyframes pulse-dot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
+  @keyframes pulse-neon {
+    0%,100% { opacity: 1; transform: scale(1); box-shadow: 0 0 6px var(--neon); }
+    50% { opacity: 0.4; transform: scale(0.7); box-shadow: none; }
   }
 
   .hero-title {
     font-family: 'Noto Serif SC', serif;
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(1.9rem, 4vw, 3rem);
     font-weight: 700;
     color: #fff;
     line-height: 1.25;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
     letter-spacing: -0.01em;
   }
-
-  .hero-title .highlight {
-    color: var(--accent);
-    position: relative;
+  .hero-title .code-accent {
+    color: var(--neon);
+    font-family: 'Courier New', monospace;
+    font-size: 0.92em;
+    text-shadow: 0 0 20px rgba(0,212,255,0.45);
   }
 
-  .hero-subtitle {
-    font-size: 1.1rem;
-    color: rgba(255,255,255,0.7);
+  /* 打字机 */
+  .hero-typewriter-wrap {
+    height: 32px;
     margin-bottom: 2rem;
-    max-width: 560px;
-    font-weight: 300;
-    line-height: 1.8;
   }
-
-  .hero-subtitle strong {
-    color: var(--accent-warm);
-    font-weight: 500;
+  #hero-typewriter {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    color: rgba(0,212,255,0.85);
+    letter-spacing: 0.04em;
   }
+  .tw-cursor {
+    display: inline-block;
+    width: 2px; height: 1em;
+    background: var(--neon);
+    margin-left: 3px;
+    vertical-align: text-bottom;
+    animation: twblink 0.85s steps(1) infinite;
+  }
+  @keyframes twblink { 0%,100%{opacity:1} 50%{opacity:0} }
 
   /* Stats chips */
   .hero-stats {
@@ -243,26 +282,22 @@ body {
     gap: 0.75rem;
     margin-bottom: 2.5rem;
   }
-
   .stat-chip {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    color: rgba(255,255,255,0.85);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
     padding: 0.5rem 1rem;
     border-radius: 8px;
     font-size: 0.825rem;
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    font-weight: 400;
     transition: all 0.2s;
   }
-
   .stat-chip:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(14,165,233,0.4);
+    background: rgba(0,212,255,0.08);
+    border-color: rgba(0,212,255,0.35);
   }
-
   .stat-chip .icon { font-size: 1rem; }
 
   .hero-buttons {
@@ -270,83 +305,77 @@ body {
     gap: 1rem;
     flex-wrap: wrap;
   }
-
   .btn-primary {
-    background: var(--accent);
-    color: #fff;
+    background: var(--neon);
+    color: #000;
     padding: 0.75rem 1.75rem;
     border-radius: 8px;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 700;
     font-size: 0.95rem;
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.03em;
   }
-
   .btn-primary:hover {
-    background: #0284c7;
-    transform: translateY(-1px);
-    box-shadow: 0 8px 24px rgba(14,165,233,0.35);
+    background: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0,212,255,0.4);
   }
-
   .btn-secondary {
     background: transparent;
-    color: rgba(255,255,255,0.85);
+    color: rgba(255,255,255,0.8);
     padding: 0.75rem 1.75rem;
     border-radius: 8px;
     text-decoration: none;
     font-weight: 400;
     font-size: 0.95rem;
-    border: 1px solid rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.22);
     transition: all 0.2s;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
   }
-
   .btn-secondary:hover {
-    border-color: rgba(255,255,255,0.5);
-    color: #fff;
+    border-color: rgba(0,212,255,0.55);
+    color: var(--neon);
   }
 
-  /* Hero card */
+  /* Hero 右侧卡片 */
   .hero-card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(0,212,255,0.04);
+    border: 1px solid rgba(0,212,255,0.18);
     border-radius: 16px;
     padding: 2rem;
     backdrop-filter: blur(8px);
   }
-
   .hero-card-title {
-    color: rgba(255,255,255,0.5);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
+    color: rgba(0,212,255,0.5);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     margin-bottom: 1.25rem;
+    font-family: 'Courier New', monospace;
   }
-
   .contact-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
     padding: 0.9rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.08);
-    color: rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.75);
     font-size: 0.875rem;
     text-decoration: none;
     transition: color 0.2s;
   }
-
   .contact-item:last-of-type { border-bottom: none; }
-  .contact-item:hover { color: var(--accent); }
-
+  .contact-item:hover { color: var(--neon); }
   .contact-icon {
-    width: 36px;
-    height: 36px;
-    background: rgba(14,165,233,0.15);
+    width: 36px; height: 36px;
+    background: rgba(0,212,255,0.1);
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -354,25 +383,16 @@ body {
     font-size: 1rem;
     flex-shrink: 0;
   }
-
   .contact-label {
     font-size: 0.7rem;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.35);
     display: block;
     margin-bottom: 0.15rem;
   }
 
   /* ===== SECTIONS ===== */
-  section {
-    padding: 5rem 0;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-  }
-
+  section { padding: 5rem 0; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
   .section-label {
     font-size: 0.75rem;
     letter-spacing: 0.12em;
@@ -381,7 +401,6 @@ body {
     font-weight: 600;
     margin-bottom: 0.75rem;
   }
-
   .section-title {
     font-family: 'Noto Serif SC', serif;
     font-size: clamp(1.6rem, 3vw, 2.2rem);
@@ -390,7 +409,6 @@ body {
     line-height: 1.3;
     margin-bottom: 1rem;
   }
-
   .section-desc {
     color: var(--text-muted);
     font-size: 1rem;
@@ -400,32 +418,10 @@ body {
 
   /* ===== ABOUT ===== */
   .about { background: #fff; }
-
-  .about-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    align-items: center;
-  }
-
-  .about-text p {
-    color: var(--text-muted);
-    margin-bottom: 1.1rem;
-    font-size: 0.975rem;
-    line-height: 1.85;
-  }
-
-  .about-text p strong {
-    color: var(--text);
-    font-weight: 500;
-  }
-
-  .about-highlights {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+  .about-text p { color: var(--text-muted); margin-bottom: 1.1rem; font-size: 0.975rem; line-height: 1.85; }
+  .about-text p strong { color: var(--text); font-weight: 500; }
+  .about-highlights { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
   .highlight-card {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -433,12 +429,7 @@ body {
     padding: 1.25rem;
     transition: all 0.2s;
   }
-
-  .highlight-card:hover {
-    border-color: var(--primary-light);
-    box-shadow: 0 4px 16px rgba(30,58,95,0.08);
-  }
-
+  .highlight-card:hover { border-color: var(--primary-light); box-shadow: 0 4px 16px rgba(30,58,95,0.08); }
   .highlight-num {
     font-family: 'Noto Serif SC', serif;
     font-size: 1.75rem;
@@ -447,25 +438,12 @@ body {
     line-height: 1;
     margin-bottom: 0.3rem;
   }
-
   .highlight-num span { color: var(--accent); }
-
-  .highlight-label {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    font-weight: 400;
-  }
+  .highlight-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 400; }
 
   /* ===== SKILLS ===== */
   .skills-section { background: var(--bg); }
-
-  .skills-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-    margin-top: 3rem;
-  }
-
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
   .skill-card {
     background: #fff;
     border: 1px solid var(--border);
@@ -475,62 +453,31 @@ body {
     position: relative;
     overflow: hidden;
   }
-
   .skill-card::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0; left: 0; right: 0;
     height: 3px;
     background: var(--accent);
     transform: scaleX(0);
     transition: transform 0.3s;
     transform-origin: left;
   }
-
   .skill-card:hover::before { transform: scaleX(1); }
-
-  .skill-card:hover {
-    box-shadow: 0 8px 32px rgba(30,58,95,0.1);
-    transform: translateY(-2px);
-  }
-
+  .skill-card:hover { box-shadow: 0 8px 32px rgba(30,58,95,0.1); transform: translateY(-2px); }
   .skill-card-icon {
-    width: 48px;
-    height: 48px;
+    width: 48px; height: 48px;
     border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.5rem;
     margin-bottom: 1rem;
   }
-
   .icon-blue { background: rgba(37,99,168,0.1); }
   .icon-green { background: rgba(5,150,105,0.1); }
   .icon-amber { background: rgba(245,158,11,0.1); }
-
-  .skill-card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 0.6rem;
-  }
-
-  .skill-card p {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-    line-height: 1.7;
-  }
-
-  .tech-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-  }
-
+  .skill-card h3 { font-size: 1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.6rem; }
+  .skill-card p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.7; }
+  .tech-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .tech-tag {
     background: var(--bg);
     color: var(--primary-light);
@@ -543,14 +490,7 @@ body {
 
   /* ===== PROJECTS ===== */
   .projects { background: #fff; }
-
-  .projects-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 1.75rem;
-    margin-top: 3rem;
-  }
-
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.75rem; margin-top: 3rem; }
   .project-card {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -558,38 +498,23 @@ body {
     overflow: hidden;
     transition: all 0.3s;
   }
-
-  .project-card:hover {
-    box-shadow: 0 16px 48px rgba(30,58,95,0.12);
-    transform: translateY(-3px);
-  }
-
+  .project-card:hover { box-shadow: 0 16px 48px rgba(30,58,95,0.12); transform: translateY(-3px); }
   .project-header {
     padding: 1.75rem 1.75rem 1.25rem;
     background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
     position: relative;
     overflow: hidden;
   }
-
-  .project-header.green {
-    background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  }
-
-  .project-header.teal {
-    background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%);
-  }
-
+  .project-header.green { background: linear-gradient(135deg, #047857 0%, #059669 100%); }
+  .project-header.teal { background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 100%); }
   .project-header::after {
     content: '';
     position: absolute;
-    width: 120px;
-    height: 120px;
+    width: 120px; height: 120px;
     border-radius: 50%;
     background: rgba(255,255,255,0.05);
-    bottom: -40px;
-    right: -20px;
+    bottom: -40px; right: -20px;
   }
-
   .project-badge {
     display: inline-block;
     background: rgba(255,255,255,0.2);
@@ -601,7 +526,6 @@ body {
     font-weight: 500;
     letter-spacing: 0.05em;
   }
-
   .project-name {
     font-family: 'Noto Serif SC', serif;
     font-size: 1.25rem;
@@ -609,28 +533,10 @@ body {
     color: #fff;
     margin-bottom: 0.4rem;
   }
-
-  .project-sub {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.65);
-  }
-
-  .project-body {
-    padding: 1.5rem 1.75rem;
-  }
-
-  .project-desc {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.75;
-    margin-bottom: 1.25rem;
-  }
-
-  .project-features {
-    list-style: none;
-    margin-bottom: 1.5rem;
-  }
-
+  .project-sub { font-size: 0.8rem; color: rgba(255,255,255,0.65); }
+  .project-body { padding: 1.5rem 1.75rem; }
+  .project-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 1.25rem; }
+  .project-features { list-style: none; margin-bottom: 1.5rem; }
   .project-features li {
     font-size: 0.85rem;
     color: var(--text);
@@ -638,15 +544,7 @@ body {
     padding-left: 1.1rem;
     position: relative;
   }
-
-  .project-features li::before {
-    content: '▸';
-    position: absolute;
-    left: 0;
-    color: var(--accent);
-    font-size: 0.75rem;
-  }
-
+  .project-features li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); font-size: 0.75rem; }
   .project-link {
     display: inline-flex;
     align-items: center;
@@ -657,19 +555,11 @@ body {
     font-weight: 500;
     transition: gap 0.2s;
   }
-
   .project-link:hover { gap: 0.65rem; }
 
   /* ===== COOPERATION ===== */
   .cooperation { background: var(--bg); }
-
-  .coop-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-    margin-top: 3rem;
-  }
-
+  .coop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 3rem; }
   .coop-card {
     background: #fff;
     border: 1px solid var(--border);
@@ -677,35 +567,11 @@ body {
     padding: 2rem;
     transition: all 0.25s;
   }
-
-  .coop-card:hover {
-    border-color: var(--primary-light);
-    box-shadow: 0 8px 32px rgba(30,58,95,0.08);
-  }
-
-  .coop-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .coop-card h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--primary);
-    margin-bottom: 0.75rem;
-  }
-
-  .coop-card p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    line-height: 1.8;
-    margin-bottom: 1rem;
-  }
-
-  .coop-benefits {
-    list-style: none;
-  }
-
+  .coop-card:hover { border-color: var(--primary-light); box-shadow: 0 8px 32px rgba(30,58,95,0.08); }
+  .coop-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .coop-card h3 { font-size: 1.1rem; font-weight: 600; color: var(--primary); margin-bottom: 0.75rem; }
+  .coop-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.8; margin-bottom: 1rem; }
+  .coop-benefits { list-style: none; }
   .coop-benefits li {
     font-size: 0.85rem;
     color: var(--text);
@@ -714,17 +580,10 @@ body {
     align-items: center;
     gap: 0.5rem;
   }
-
-  .coop-benefits li::before {
-    content: '✓';
-    color: var(--green);
-    font-weight: 700;
-    flex-shrink: 0;
-  }
+  .coop-benefits li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; }
 
   /* ===== PROCESS ===== */
   .process { background: var(--primary); position: relative; overflow: hidden; }
-
   .process::before {
     content: '';
     position: absolute;
@@ -734,11 +593,9 @@ body {
       linear-gradient(90deg, rgba(14,165,233,0.05) 1px, transparent 1px);
     background-size: 50px 50px;
   }
-
   .process .section-label { color: var(--accent); }
   .process .section-title { color: #fff; }
   .process .section-desc { color: rgba(255,255,255,0.6); }
-
   .process-steps {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -746,27 +603,17 @@ body {
     margin-top: 3rem;
     position: relative;
   }
-
   .process-steps::before {
     content: '';
     position: absolute;
-    top: 28px;
-    left: 10%;
-    right: 10%;
+    top: 28px; left: 10%; right: 10%;
     height: 1px;
     background: linear-gradient(90deg, transparent, rgba(14,165,233,0.4), transparent);
     z-index: 0;
   }
-
-  .step {
-    text-align: center;
-    position: relative;
-    z-index: 1;
-  }
-
+  .step { text-align: center; position: relative; z-index: 1; }
   .step-num {
-    width: 56px;
-    height: 56px;
+    width: 56px; height: 56px;
     border-radius: 50%;
     background: rgba(14,165,233,0.15);
     border: 2px solid rgba(14,165,233,0.4);
@@ -780,43 +627,14 @@ body {
     margin: 0 auto 1rem;
     transition: all 0.2s;
   }
-
-  .step:hover .step-num {
-    background: var(--accent);
-    color: #fff;
-    border-color: var(--accent);
-  }
-
-  .step-title {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #fff;
-    margin-bottom: 0.4rem;
-  }
-
-  .step-desc {
-    font-size: 0.775rem;
-    color: rgba(255,255,255,0.5);
-    line-height: 1.6;
-  }
+  .step:hover .step-num { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .step-title { font-size: 0.875rem; font-weight: 600; color: #fff; margin-bottom: 0.4rem; }
+  .step-desc { font-size: 0.775rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
 
   /* ===== CONTACT ===== */
   .contact-section { background: #fff; }
-
-  .contact-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-  }
-
-  .contact-cards {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .contact-cards { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
   .contact-card-item {
     display: flex;
     align-items: center;
@@ -828,36 +646,17 @@ body {
     text-decoration: none;
     transition: all 0.2s;
   }
-
-  .contact-card-item:hover {
-    border-color: var(--primary-light);
-    box-shadow: 0 4px 16px rgba(30,58,95,0.08);
-  }
-
+  .contact-card-item:hover { border-color: var(--primary-light); box-shadow: 0 4px 16px rgba(30,58,95,0.08); }
   .cc-icon {
-    width: 44px;
-    height: 44px;
+    width: 44px; height: 44px;
     border-radius: 10px;
     background: rgba(37,99,168,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; align-items: center; justify-content: center;
     font-size: 1.25rem;
     flex-shrink: 0;
   }
-
-  .cc-title {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-bottom: 0.15rem;
-  }
-
-  .cc-value {
-    font-size: 0.95rem;
-    color: var(--text);
-    font-weight: 500;
-  }
-
+  .cc-title { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.15rem; }
+  .cc-value { font-size: 0.95rem; color: var(--text); font-weight: 500; }
   .value-banner {
     background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
     border-radius: 16px;
@@ -866,150 +665,45 @@ body {
     position: relative;
     overflow: hidden;
   }
-
   .value-banner::after {
     content: '';
     position: absolute;
-    width: 200px;
-    height: 200px;
+    width: 200px; height: 200px;
     border-radius: 50%;
     background: rgba(14,165,233,0.1);
-    bottom: -60px;
-    right: -60px;
+    bottom: -60px; right: -60px;
   }
-
-  .value-banner h3 {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-  }
-
-  .value-banner p {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.75);
-    line-height: 1.8;
-    margin-bottom: 1.5rem;
-  }
-
-  .value-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .value-list li {
-    font-size: 0.875rem;
-    color: rgba(255,255,255,0.85);
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .value-list li::before {
-    content: '→';
-    color: var(--accent);
-  }
+  .value-banner h3 { font-family: 'Noto Serif SC', serif; font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
+  .value-banner p { font-size: 0.9rem; color: rgba(255,255,255,0.75); line-height: 1.8; margin-bottom: 1.5rem; }
+  .value-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .value-list li { font-size: 0.875rem; color: rgba(255,255,255,0.85); display: flex; align-items: center; gap: 0.6rem; }
+  .value-list li::before { content: '→'; color: var(--accent); }
 
   /* ===== FOOTER ===== */
-  footer {
-    background: #0f172a;
-    padding: 3rem 0 2rem;
-    text-align: center;
-  }
-
-  .footer-logo {
-    font-family: 'Noto Serif SC', serif;
-    font-size: 1.25rem;
-    color: #fff;
-    margin-bottom: 0.5rem;
-  }
-
-  .footer-logo span { color: var(--accent); }
-
-  .footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin: 1.5rem 0;
-    list-style: none;
-    flex-wrap: wrap;
-  }
-
-  .footer-links a {
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-    font-size: 0.85rem;
-    transition: color 0.2s;
-  }
-
-  .footer-links a:hover { color: var(--accent); }
-
-  footer p {
-    color: rgba(255,255,255,0.3);
-    font-size: 0.8rem;
-  }
-
-  /* ===== FLOATING CTA ===== */
-  .floating-cta {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    background: var(--accent);
-    color: #fff;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    text-decoration: none;
-    box-shadow: 0 8px 24px rgba(14,165,233,0.4);
-    z-index: 50;
-    transition: all 0.2s;
-    animation: float-up 0.5s 1s both;
-  }
-
-  @keyframes float-up {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .floating-cta:hover {
-    transform: scale(1.1);
-    box-shadow: 0 12px 32px rgba(14,165,233,0.5);
-  }
+  footer { background: #0f172a; padding: 3rem 0 2rem; text-align: center; }
+  .footer-logo { font-family: 'Noto Serif SC', serif; font-size: 1.25rem; color: #fff; margin-bottom: 0.5rem; }
+  .footer-logo span { color: var(--neon); }
+  .footer-links { display: flex; justify-content: center; gap: 2rem; margin: 1.5rem 0; list-style: none; flex-wrap: wrap; }
+  .footer-links a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--neon); }
+  footer p { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
 
   /* ===== ANIMATIONS ===== */
-  .fade-in {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-
-  .fade-in.visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  .fade-in { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
 
   /* ===== MOBILE NAV ===== */
   .mobile-nav {
     display: none;
     position: fixed;
-    top: 64px;
-    left: 0;
-    right: 0;
+    top: 64px; left: 0; right: 0;
     background: rgba(15, 23, 42, 0.98);
     backdrop-filter: blur(12px);
     padding: 1.5rem;
     z-index: 99;
     border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-
   .mobile-nav.open { display: flex; flex-direction: column; gap: 0.5rem; }
-
   .mobile-nav a {
     color: rgba(255,255,255,0.8);
     text-decoration: none;
@@ -1018,7 +712,6 @@ body {
     border-radius: 8px;
     transition: all 0.2s;
   }
-
   .mobile-nav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
 
   /* ===== RESPONSIVE ===== */
@@ -1029,7 +722,6 @@ body {
     .coop-grid { grid-template-columns: 1fr; }
     .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
   }
-
   @media (max-width: 768px) {
     .nav-links { display: none; }
     .hamburger { display: flex; }
@@ -1038,12 +730,12 @@ body {
     .process-steps::before { display: none; }
     .about-highlights { grid-template-columns: 1fr 1fr; }
     .hero-title { font-size: 1.75rem; }
+    .hero { cursor: auto; }
+    #hero-cursor { display: none !important; }
   }
-
   @media (max-width: 480px) {
     .process-steps { grid-template-columns: 1fr; }
     .about-highlights { grid-template-columns: 1fr; }
-    .floating-cta { bottom: 1.5rem; right: 1.5rem; }
   }
 </style>
 </head>
@@ -1077,19 +769,41 @@ body {
   <a href="#contact" onclick="closeMenu()">联系我</a>
 </div>
 
-<!-- ===== HERO ===== -->
+<!-- ===== HERO — 黑科技版 ===== -->
 <section class="hero" id="home">
-  <div class="hero-orb"></div>
+  <!-- 矩阵雨 canvas -->
+  <canvas id="canvas-matrix"></canvas>
+  <!-- 粒子神经网络 canvas -->
+  <canvas id="canvas-particles"></canvas>
+
+  <!-- HUD 装饰 -->
+  <div class="hero-scanline"></div>
+  <div class="hero-corner tl"></div>
+  <div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div>
+  <div class="hero-corner br"></div>
+  <div id="hero-cursor"></div>
+  <div class="hero-statusbar">
+    SYS:<span class="ok">ONLINE</span> &nbsp;|&nbsp;
+    NODES:<span id="stat-nodes">80</span> &nbsp;|&nbsp;
+    UPTIME:<span id="stat-uptime">00:00:00</span> &nbsp;|&nbsp;
+    EXP:<span class="ok">17YR+</span>
+  </div>
+
+  <!-- 主内容 -->
   <div class="hero-content">
     <div class="hero-left">
-      <div class="hero-badge">🚀 现开放合作 · 欢迎洽谈</div>
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        SYSTEM ONLINE · 现开放合作 · 欢迎洽谈
+      </div>
       <h1 class="hero-title">
         17年+ Java全栈专家<br>
-        <span class="highlight">AI 应用开发者</span>
+        <span class="code-accent">&lt;AI应用开发者 /&gt;</span>
       </h1>
-      <p class="hero-subtitle">
-        为您提供<strong>高性价比的软件定制开发</strong>，无中间商差价，<br>沟通更直接，功能更精简实用，交付更高效。
-      </p>
+      <div class="hero-typewriter-wrap">
+        <span id="hero-typewriter"></span><span class="tw-cursor"></span>
+      </div>
       <div class="hero-stats">
         <div class="stat-chip">
           <span class="icon">📝</span>
@@ -1109,14 +823,14 @@ body {
         </div>
       </div>
       <div class="hero-buttons">
-        <a href="#contact" class="btn-primary">📬 立即联系合作</a>
+        <a href="#contact" class="btn-primary">&#62;_ 立即联系合作</a>
         <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="btn-secondary">📖 查看CSDN博客 →</a>
       </div>
     </div>
 
-    <!-- Contact Card (desktop only) -->
+    <!-- 右侧联系卡片（桌面端显示） -->
     <div class="hero-card">
-      <div class="hero-card-title">快速联系</div>
+      <div class="hero-card-title">// 快速联系</div>
       <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="contact-item">
         <div class="contact-icon">📝</div>
         <div>
@@ -1138,7 +852,7 @@ body {
           www.prompts123.org
         </div>
       </a>
-      <a href="#contact" class="contact-item" style="margin-top:1rem; background:rgba(14,165,233,0.15); border-radius:8px; padding:0.8rem 1rem; justify-content:center; color:var(--accent); font-weight:500;">
+      <a href="#contact" class="contact-item" style="margin-top:1rem;background:rgba(0,212,255,0.1);border-radius:8px;padding:0.8rem 1rem;justify-content:center;color:var(--neon);font-weight:600;border:1px solid rgba(0,212,255,0.3);">
         ✉ 发起合作洽谈
       </a>
     </div>
@@ -1182,7 +896,7 @@ body {
           <div class="highlight-num">N<span>+</span></div>
           <div class="highlight-label">已交付项目案例</div>
         </div>
-        <div class="highlight-card" style="grid-column: span 2;">
+        <div class="highlight-card" style="grid-column:span 2;">
           <div class="highlight-num" style="font-size:1.2rem;">AI 应用<span> 落地</span></div>
           <div class="highlight-label">智能客服 · 提示词平台 · 已商业化运营</div>
         </div>
@@ -1194,78 +908,58 @@ body {
 <!-- ===== SKILLS ===== -->
 <section class="skills-section" id="skills">
   <div class="container">
-    <div class="fade-in" style="text-align:center; margin-bottom:0;">
+    <div class="fade-in" style="text-align:center;margin-bottom:0;">
       <div class="section-label">技术能力</div>
       <h2 class="section-title">覆盖全栈的技术体系</h2>
       <p class="section-desc" style="margin:0 auto;">多语言、多框架的实战积累，应对各类业务场景。</p>
     </div>
     <div class="skills-grid">
-
       <div class="skill-card fade-in">
         <div class="skill-card-icon icon-blue">☕</div>
         <h3>Java 后端开发</h3>
         <p>深厚的 Java 生态积累，熟练运用企业级框架构建高可用、可扩展的后端系统。</p>
         <div class="tech-tags">
-          <span class="tech-tag">Java 8/11/17</span>
-          <span class="tech-tag">Spring Boot</span>
-          <span class="tech-tag">Spring Cloud</span>
-          <span class="tech-tag">MyBatis</span>
-          <span class="tech-tag">JPA</span>
-          <span class="tech-tag">Redis</span>
-          <span class="tech-tag">Kafka</span>
-          <span class="tech-tag">Elasticsearch</span>
-          <span class="tech-tag">MySQL</span>
-          <span class="tech-tag">PostgreSQL</span>
-          <span class="tech-tag">Docker</span>
-          <span class="tech-tag">K8s</span>
+          <span class="tech-tag">Java 8/11/17</span><span class="tech-tag">Spring Boot</span>
+          <span class="tech-tag">Spring Cloud</span><span class="tech-tag">MyBatis</span>
+          <span class="tech-tag">JPA</span><span class="tech-tag">Redis</span>
+          <span class="tech-tag">Kafka</span><span class="tech-tag">Elasticsearch</span>
+          <span class="tech-tag">MySQL</span><span class="tech-tag">PostgreSQL</span>
+          <span class="tech-tag">Docker</span><span class="tech-tag">K8s</span>
         </div>
       </div>
-
       <div class="skill-card fade-in" style="transition-delay:0.1s;">
         <div class="skill-card-icon icon-green">🤖</div>
         <h3>AI 应用开发</h3>
         <p>已落地 AI 智能客服、提示词平台等实际项目，有从 Prompt 工程到系统集成的完整经验。</p>
         <div class="tech-tags">
-          <span class="tech-tag">LLM 集成</span>
-          <span class="tech-tag">Prompt 工程</span>
-          <span class="tech-tag">RAG</span>
-          <span class="tech-tag">智能客服</span>
-          <span class="tech-tag">OpenAI API</span>
-          <span class="tech-tag">文心一言</span>
-          <span class="tech-tag">向量数据库</span>
-          <span class="tech-tag">Python</span>
-          <span class="tech-tag">FastAPI</span>
-          <span class="tech-tag">LangChain</span>
+          <span class="tech-tag">LLM 集成</span><span class="tech-tag">Prompt 工程</span>
+          <span class="tech-tag">RAG</span><span class="tech-tag">智能客服</span>
+          <span class="tech-tag">OpenAI API</span><span class="tech-tag">文心一言</span>
+          <span class="tech-tag">向量数据库</span><span class="tech-tag">Python</span>
+          <span class="tech-tag">FastAPI</span><span class="tech-tag">LangChain</span>
         </div>
       </div>
-
       <div class="skill-card fade-in" style="transition-delay:0.2s;">
         <div class="skill-card-icon icon-amber">🌐</div>
         <h3>前端与多端开发</h3>
         <p>全栈能力贯穿前后端，可独立交付 Web 应用、移动 App 及跨平台解决方案。</p>
         <div class="tech-tags">
-          <span class="tech-tag">Vue.js</span>
-          <span class="tech-tag">React</span>
-          <span class="tech-tag">HTML5/CSS3</span>
-          <span class="tech-tag">JavaScript/TS</span>
-          <span class="tech-tag">Android</span>
-          <span class="tech-tag">C#/.NET</span>
-          <span class="tech-tag">Go</span>
-          <span class="tech-tag">小程序</span>
+          <span class="tech-tag">Vue.js</span><span class="tech-tag">React</span>
+          <span class="tech-tag">HTML5/CSS3</span><span class="tech-tag">JavaScript/TS</span>
+          <span class="tech-tag">Android</span><span class="tech-tag">C#/.NET</span>
+          <span class="tech-tag">Go</span><span class="tech-tag">小程序</span>
           <span class="tech-tag">Uni-app</span>
         </div>
       </div>
-
     </div>
-
     <!-- CSDN Banner -->
-    <div class="fade-in" style="margin-top:2rem; background:#fff; border:1px solid var(--border); border-radius:12px; padding:1.5rem 2rem; display:flex; align-items:center; gap:1.5rem; flex-wrap:wrap;">
+    <div class="fade-in" style="margin-top:2rem;background:#fff;border:1px solid var(--border);border-radius:12px;padding:1.5rem 2rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;">
       <div style="font-size:2rem;">📰</div>
-      <div style="flex:1; min-width:200px;">
-        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.25rem;">CSDN 博客编程框架技术领域认证</div>
-        <div style="font-weight:600; color:var(--primary); font-size:1rem;">300+ 技术文章 · 36,700+ 粉丝 · Java / AI 领域持续输出</div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.25rem;">CSDN 博客编程框架技术领域认证</div>
+        <div style="font-weight:600;color:var(--primary);font-size:1rem;">300+ 技术文章 · 36,700+ 粉丝 · Java / AI 领域持续输出</div>
       </div>
-      <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="btn-primary" style="flex-shrink:0; background:var(--primary);">访问博客 →</a>
+      <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="btn-primary" style="flex-shrink:0;background:var(--primary);color:#fff;">访问博客 →</a>
     </div>
   </div>
 </section>
@@ -1279,7 +973,6 @@ body {
       <p class="section-desc">从构思到部署全程操刀，每个项目都是技术实力的真实体现。</p>
     </div>
     <div class="projects-grid">
-
       <div class="project-card fade-in">
         <div class="project-header green">
           <div class="project-badge">AI · 企业服务</div>
@@ -1287,9 +980,7 @@ body {
           <div class="project-sub">sihuaai.com · 已商业化运营</div>
         </div>
         <div class="project-body">
-          <p class="project-desc">
-            企业级 Java + AI 结合的典型案例。基于大语言模型构建的智能客服系统，支持多渠道接入、私有知识库训练，为企业提供 7×24 小时自动化客户服务能力。
-          </p>
+          <p class="project-desc">企业级 Java + AI 结合的典型案例。基于大语言模型构建的智能客服系统，支持多渠道接入、私有知识库训练，为企业提供 7×24 小时自动化客户服务能力。</p>
           <ul class="project-features">
             <li>Spring Boot + LLM 全栈架构</li>
             <li>RAG 知识库检索增强</li>
@@ -1297,12 +988,9 @@ body {
             <li>对话记忆与上下文管理</li>
             <li>企业私有化部署支持</li>
           </ul>
-          <a href="https://www.sihuaai.com" target="_blank" rel="noopener" class="project-link">
-            访问项目官网 →
-          </a>
+          <a href="https://www.sihuaai.com" target="_blank" rel="noopener" class="project-link">访问项目官网 →</a>
         </div>
       </div>
-
       <div class="project-card fade-in" style="transition-delay:0.1s;">
         <div class="project-header teal">
           <div class="project-badge">🌍 全球首创 · AI 平台</div>
@@ -1310,9 +998,7 @@ body {
           <div class="project-sub">prompts123.org · 大流量 · 高并发</div>
         </div>
         <div class="project-body">
-          <p class="project-desc">
-            全球首个专注于中文AI提示词的内容平台。平台汇聚海量高质量提示词，支持分类搜索、用户贡献、评分系统，展示了大流量内容平台的高并发架构实践能力。
-          </p>
+          <p class="project-desc">全球首个专注于中文AI提示词的内容平台。平台汇聚海量高质量提示词，支持分类搜索、用户贡献、评分系统，展示了大流量内容平台的高并发架构实践能力。</p>
           <ul class="project-features">
             <li>高并发搜索引擎架构</li>
             <li>海量提示词内容管理</li>
@@ -1320,12 +1006,9 @@ body {
             <li>用户社区与贡献机制</li>
             <li>AI 前沿产品设计理念</li>
           </ul>
-          <a href="https://www.prompts123.org" target="_blank" rel="noopener" class="project-link">
-            访问平台 →
-          </a>
+          <a href="https://www.prompts123.org" target="_blank" rel="noopener" class="project-link">访问平台 →</a>
         </div>
       </div>
-
       <div class="project-card fade-in" style="transition-delay:0.2s;">
         <div class="project-header">
           <div class="project-badge">📱 全栈开发</div>
@@ -1333,9 +1016,7 @@ body {
           <div class="project-sub">bloghua.com · 技术展示与合作入口</div>
         </div>
         <div class="project-body">
-          <p class="project-desc">
-            集技术博客、项目展示、合作洽谈于一体的个人品牌网站。响应式设计，面向企业客户和技术伙伴，降低合作门槛、直接高效沟通。
-          </p>
+          <p class="project-desc">集技术博客、项目展示、合作洽谈于一体的个人品牌网站。响应式设计，面向企业客户和技术伙伴，降低合作门槛、直接高效沟通。</p>
           <ul class="project-features">
             <li>现代响应式 UI 设计</li>
             <li>SEO 优化与内容策略</li>
@@ -1343,12 +1024,9 @@ body {
             <li>300+ 原创技术文章</li>
             <li>36,700+ 粉丝社区影响力</li>
           </ul>
-          <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="project-link">
-            查看技术博客 →
-          </a>
+          <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="project-link">查看技术博客 →</a>
         </div>
       </div>
-
     </div>
   </div>
 </section>
@@ -1362,13 +1040,10 @@ body {
       <p class="section-desc" style="margin:0 auto;">无论您是终端客户还是软件商，都能找到适合的合作模式。</p>
     </div>
     <div class="coop-grid">
-
       <div class="coop-card fade-in">
         <div class="coop-icon">🏢</div>
         <h3>直接服务终端客户</h3>
-        <p>
-          如果您是有软件定制需求的企业，欢迎直接联系。省去中间环节，我们直接沟通，快速理解您的业务场景和真实需求，给出精准的技术方案。
-        </p>
+        <p>如果您是有软件定制需求的企业，欢迎直接联系。省去中间环节，我们直接沟通，快速理解您的业务场景和真实需求，给出精准的技术方案。</p>
         <ul class="coop-benefits">
           <li>节省 20%~40% 中介费用</li>
           <li>需求直达开发者，无信息损耗</li>
@@ -1377,13 +1052,10 @@ body {
           <li>长期维护支持，关系更稳定</li>
         </ul>
       </div>
-
       <div class="coop-card fade-in" style="transition-delay:0.1s;">
         <div class="coop-icon">🤝</div>
         <h3>作为技术伙伴与软件商协同</h3>
-        <p>
-          如果您是软件公司或项目团队，需要可靠的外包技术资源，我可以作为高级技术伙伴加入，承担核心模块开发、技术攻坚或 AI 能力集成工作。
-        </p>
+        <p>如果您是软件公司或项目团队，需要可靠的外包技术资源，我可以作为高级技术伙伴加入，承担核心模块开发、技术攻坚或 AI 能力集成工作。</p>
         <ul class="coop-benefits">
           <li>丰富的项目经验，快速上手</li>
           <li>可承接独立模块或整体项目</li>
@@ -1392,14 +1064,11 @@ body {
           <li>灵活的合作周期与结算方式</li>
         </ul>
       </div>
-
     </div>
-
-    <!-- Value Proposition Banner -->
-    <div class="fade-in" style="margin-top:2rem; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border:1px solid #bae6fd; border-radius:16px; padding:2rem; text-align:center;">
-      <div style="font-size:1.5rem; margin-bottom:0.5rem;">💡</div>
-      <h3 style="font-size:1.1rem; font-weight:600; color:var(--primary); margin-bottom:0.5rem;">为什么选择直接合作？</h3>
-      <p style="color:var(--text-muted); font-size:0.9rem; max-width:600px; margin:0 auto;">
+    <div class="fade-in" style="margin-top:2rem;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border:1px solid #bae6fd;border-radius:16px;padding:2rem;text-align:center;">
+      <div style="font-size:1.5rem;margin-bottom:0.5rem;">💡</div>
+      <h3 style="font-size:1.1rem;font-weight:600;color:var(--primary);margin-bottom:0.5rem;">为什么选择直接合作？</h3>
+      <p style="color:var(--text-muted);font-size:0.9rem;max-width:600px;margin:0 auto;">
         传统软件外包经过层层转包，您的预算有 30%-50% 被消耗在沟通与管理环节。与我直接合作，每一分钱都花在实际开发上，您得到更高效的沟通体验和更高性价比的交付结果。
       </p>
     </div>
@@ -1457,35 +1126,22 @@ body {
         <div class="contact-cards fade-in">
           <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="contact-card-item">
             <div class="cc-icon">📝</div>
-            <div>
-              <div class="cc-title">CSDN 技术博客</div>
-              <div class="cc-value">qyhua.blog.csdn.net</div>
-            </div>
+            <div><div class="cc-title">CSDN 技术博客</div><div class="cc-value">qyhua.blog.csdn.net</div></div>
           </a>
           <a href="https://www.sihuaai.com" target="_blank" rel="noopener" class="contact-card-item">
             <div class="cc-icon">🤖</div>
-            <div>
-              <div class="cc-title">斯华AI客服平台</div>
-              <div class="cc-value">www.sihuaai.com</div>
-            </div>
+            <div><div class="cc-title">斯华AI客服平台</div><div class="cc-value">www.sihuaai.com</div></div>
           </a>
           <a href="https://www.prompts123.org" target="_blank" rel="noopener" class="contact-card-item">
             <div class="cc-icon">💡</div>
-            <div>
-              <div class="cc-title">中文AI提示词平台</div>
-              <div class="cc-value">www.prompts123.org</div>
-            </div>
+            <div><div class="cc-title">中文AI提示词平台</div><div class="cc-value">www.prompts123.org</div></div>
           </a>
           <div class="contact-card-item" style="cursor:default;">
             <div class="cc-icon">🌐</div>
-            <div>
-              <div class="cc-title">个人主页</div>
-              <div class="cc-value">www.bloghua.com</div>
-            </div>
+            <div><div class="cc-title">个人主页</div><div class="cc-value">www.bloghua.com</div></div>
           </div>
         </div>
       </div>
-
       <div class="fade-in">
         <div class="value-banner">
           <h3>🎯 适合找我合作的场景</h3>
@@ -1500,20 +1156,19 @@ body {
             <li>技术团队外包协作支持</li>
           </ul>
         </div>
-
-        <div style="margin-top:1.5rem; padding:1.5rem; background:var(--bg); border:1px solid var(--border); border-radius:12px;">
-          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.75rem;">快速洽谈入口</div>
-          <p style="font-size:0.875rem; color:var(--text); line-height:1.7; margin-bottom:1rem;">
+        <div style="margin-top:1.5rem;padding:1.5rem;background:var(--bg);border:1px solid var(--border);border-radius:12px;">
+          <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:0.75rem;">快速洽谈入口</div>
+          <p style="font-size:0.875rem;color:var(--text);line-height:1.7;margin-bottom:1rem;">
             请通过 <strong>CSDN 博客私信</strong> 或 <strong>项目官网留言</strong> 发起联系，简述您的需求背景，我会尽快回复并安排详细沟通。
           </p>
-          <div style="display:flex; align-items:center; gap:0.6rem; background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:0.6rem 1rem; margin-bottom:0.75rem;">
+          <div style="display:flex;align-items:center;gap:0.6rem;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;margin-bottom:0.75rem;">
             <span style="font-size:1rem;">✉️</span>
-            <span style="font-size:0.8rem; color:var(--text-muted);">邮件直接联系：</span>
-            <a href="mailto:qyhua0@hotmail.com" style="font-size:0.9rem; font-weight:600; color:var(--primary-light); text-decoration:none; letter-spacing:0.01em;">qyhua0@hotmail.com</a>
+            <span style="font-size:0.8rem;color:var(--text-muted);">邮件直接联系：</span>
+            <a href="mailto:qyhua0@hotmail.com" style="font-size:0.9rem;font-weight:600;color:var(--primary-light);text-decoration:none;">qyhua0@hotmail.com</a>
           </div>
-          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
-            <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="btn-primary" style="font-size:0.875rem; padding:0.6rem 1.25rem;">CSDN 私信联系</a>
-            <a href="https://www.sihuaai.com" target="_blank" rel="noopener" style="font-size:0.875rem; padding:0.6rem 1.25rem; border:1px solid var(--border); border-radius:8px; text-decoration:none; color:var(--text); display:inline-flex; align-items:center; gap:0.4rem; transition:all 0.2s;">访问斯华AI</a>
+          <div style="display:flex;gap:0.75rem;flex-wrap:wrap;">
+            <a href="https://qyhua.blog.csdn.net/" target="_blank" rel="noopener" class="btn-primary" style="font-size:0.875rem;padding:0.6rem 1.25rem;background:var(--primary);color:#fff;">CSDN 私信联系</a>
+            <a href="https://www.sihuaai.com" target="_blank" rel="noopener" style="font-size:0.875rem;padding:0.6rem 1.25rem;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text);display:inline-flex;align-items:center;gap:0.4rem;transition:all 0.2s;">访问斯华AI</a>
           </div>
         </div>
       </div>
@@ -1525,7 +1180,7 @@ body {
 <footer>
   <div class="container">
     <div class="footer-logo">Blog<span>Hua</span>.com</div>
-    <p style="color:rgba(255,255,255,0.4); font-size:0.85rem; margin-top:0.25rem;">17年+ Java全栈专家 · AI应用开发者</p>
+    <p style="color:rgba(255,255,255,0.4);font-size:0.85rem;margin-top:0.25rem;">17年+ Java全栈专家 · AI应用开发者</p>
     <ul class="footer-links">
       <li><a href="#about">关于我</a></li>
       <li><a href="#skills">技术能力</a></li>
@@ -1538,54 +1193,184 @@ body {
   </div>
 </footer>
 
-<!-- Floating CTA -->
-<!-- <a href="#contact" class="floating-cta" title="联系合作">✉</a> -->
-
 <script>
-  // ===== MOBILE MENU =====
-  function toggleMenu() {
-    const nav = document.getElementById('mobileNav');
-    nav.classList.toggle('open');
+/* ===== MOBILE MENU ===== */
+function toggleMenu(){document.getElementById('mobileNav').classList.toggle('open');}
+function closeMenu(){document.getElementById('mobileNav').classList.remove('open');}
+
+/* ===== NAVBAR SCROLL ===== */
+window.addEventListener('scroll',()=>{
+  const nb=document.getElementById('navbar');
+  nb.style.background=window.scrollY>40?'rgba(10,17,34,0.97)':'rgba(15,23,42,0.92)';
+});
+
+/* ===== SMOOTH SCROLL ===== */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',function(e){
+    e.preventDefault();
+    const t=document.querySelector(this.getAttribute('href'));
+    if(t){window.scrollTo({top:t.getBoundingClientRect().top+window.pageYOffset-72,behavior:'smooth'});}
+  });
+});
+
+/* ===== FADE IN OBSERVER ===== */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target);}});
+},{threshold:0.12});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+/* ===== HERO 黑科技动效 ===== */
+(function(){
+  const hero=document.querySelector('.hero');
+  const matrixCanvas=document.getElementById('canvas-matrix');
+  const particleCanvas=document.getElementById('canvas-particles');
+  const cursorEl=document.getElementById('hero-cursor');
+
+  function resize(){
+    const w=hero.offsetWidth,h=hero.offsetHeight;
+    matrixCanvas.width=w; matrixCanvas.height=h;
+    particleCanvas.width=w; particleCanvas.height=h;
+  }
+  resize();
+  window.addEventListener('resize',resize);
+
+  /* --- 矩阵雨 --- */
+  const mctx=matrixCanvas.getContext('2d');
+  const CHARS='ABCDEF0123456789ジャバAIコード华科技PYTHON云计算';
+  let drops=[];
+  function initDrops(){
+    const cols=Math.floor(matrixCanvas.width/16);
+    drops=Array.from({length:cols},()=>Math.random()*matrixCanvas.height/16|0);
+  }
+  initDrops();
+  window.addEventListener('resize',initDrops);
+
+  function drawMatrix(){
+    mctx.fillStyle='rgba(3,11,20,0.06)';
+    mctx.fillRect(0,0,matrixCanvas.width,matrixCanvas.height);
+    mctx.font='13px Courier New';
+    drops.forEach((y,i)=>{
+      const ch=CHARS[Math.random()*CHARS.length|0];
+      const alpha=0.15+Math.random()*0.25;
+      mctx.fillStyle=`rgba(0,212,255,${alpha})`;
+      mctx.fillText(ch,i*16,y*16);
+      if(y*16>matrixCanvas.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
+    });
   }
 
-  function closeMenu() {
-    document.getElementById('mobileNav').classList.remove('open');
-  }
+  /* --- 粒子神经网络 --- */
+  const pctx=particleCanvas.getContext('2d');
+  let mouseX=particleCanvas.width/2,mouseY=particleCanvas.height/2;
+  let mouseInHero=false;
 
-  // ===== NAVBAR SCROLL =====
-  window.addEventListener('scroll', () => {
-    const navbar = document.getElementById('navbar');
-    if (window.scrollY > 40) {
-      navbar.style.background = 'rgba(10, 17, 34, 0.97)';
-    } else {
-      navbar.style.background = 'rgba(15, 23, 42, 0.92)';
+  hero.addEventListener('mousemove',e=>{
+    const r=hero.getBoundingClientRect();
+    mouseX=e.clientX-r.left; mouseY=e.clientY-r.top;
+    mouseInHero=true;
+    cursorEl.style.left=mouseX+'px'; cursorEl.style.top=mouseY+'px';
+  });
+  hero.addEventListener('mouseleave',()=>{mouseInHero=false;});
+
+  class Particle{
+    constructor(){this.init(true);}
+    init(rand){
+      this.x=Math.random()*particleCanvas.width;
+      this.y=rand?Math.random()*particleCanvas.height:
+             (Math.random()<0.5?-10:particleCanvas.height+10);
+      this.vx=(Math.random()-0.5)*0.6;
+      this.vy=(Math.random()-0.5)*0.6;
+      this.r=Math.random()*1.8+0.8;
+      this.baseAlpha=Math.random()*0.5+0.2;
+      this.phase=Math.random()*Math.PI*2;
     }
-  });
-
-  // ===== INTERSECTION OBSERVER - fade in =====
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        observer.unobserve(entry.target);
+    update(){
+      /* 鼠标引力 */
+      if(mouseInHero){
+        const dx=mouseX-this.x,dy=mouseY-this.y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<180&&d>0){this.x+=dx/d*1.2;this.y+=dy/d*1.2;}
       }
-    });
-  }, { threshold: 0.12 });
+      this.x+=this.vx; this.y+=this.vy;
+      this.phase+=0.025;
+      if(this.x<-20||this.x>particleCanvas.width+20||
+         this.y<-20||this.y>particleCanvas.height+20)this.init(false);
+    }
+    draw(){
+      const a=this.baseAlpha*(0.65+0.35*Math.sin(this.phase));
+      pctx.beginPath();
+      pctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+      pctx.fillStyle=`rgba(0,212,255,${a})`;
+      pctx.fill();
+    }
+  }
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  const particles=Array.from({length:90},()=>new Particle());
 
-  // ===== SMOOTH SCROLL =====
-  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        const offset = 72;
-        const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
-        window.scrollTo({ top, behavior: 'smooth' });
+  function drawEdges(){
+    for(let i=0;i<particles.length;i++){
+      for(let j=i+1;j<particles.length;j++){
+        const dx=particles[i].x-particles[j].x;
+        const dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if(d<130){
+          pctx.beginPath();
+          pctx.moveTo(particles[i].x,particles[i].y);
+          pctx.lineTo(particles[j].x,particles[j].y);
+          pctx.strokeStyle=`rgba(0,212,255,${(1-d/130)*0.22})`;
+          pctx.lineWidth=0.5;
+          pctx.stroke();
+        }
       }
-    });
-  });
+    }
+  }
+
+  /* --- 打字机 --- */
+  const phrases=[
+    '> Spring Boot + AI 全链路开发',
+    '> LLM集成 · RAG · 智能客服已上线',
+    '> 无中间商 · 直接沟通 · 高性价比',
+    '> 企业系统 · 提示词平台 · 全栈交付',
+    '> 17年经验 · 技术落地 · 长期维护',
+  ];
+  let pi=0,ci=0,deleting=false;
+  const tw=document.getElementById('hero-typewriter');
+  function typeLoop(){
+    const phrase=phrases[pi];
+    if(!deleting){
+      tw.textContent=phrase.slice(0,ci++);
+      if(ci>phrase.length){deleting=true;setTimeout(typeLoop,1800);return;}
+    }else{
+      tw.textContent=phrase.slice(0,ci--);
+      if(ci<0){deleting=false;pi=(pi+1)%phrases.length;ci=0;setTimeout(typeLoop,350);return;}
+    }
+    setTimeout(typeLoop,deleting?35:60);
+  }
+  typeLoop();
+
+  /* --- 状态栏计时 --- */
+  const startTime=Date.now();
+  function updateStatus(){
+    const s=Math.floor((Date.now()-startTime)/1000);
+    const h=String(Math.floor(s/3600)).padStart(2,'0');
+    const m=String(Math.floor((s%3600)/60)).padStart(2,'0');
+    const sc=String(s%60).padStart(2,'0');
+    document.getElementById('stat-uptime').textContent=`${h}:${m}:${sc}`;
+  }
+
+  /* --- 主循环 --- */
+  let frame=0;
+  function loop(){
+    frame++;
+    if(frame%2===0)drawMatrix();
+    pctx.clearRect(0,0,particleCanvas.width,particleCanvas.height);
+    particles.forEach(p=>{p.update();p.draw();});
+    drawEdges();
+    if(frame%30===0)updateStatus();
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
 </script>
 </body>
 </html>
